@@ -2,12 +2,12 @@ import React, { Component } from "react"
 import PropTypes from "prop-types"
 
 export default class AlternativeSchemaSelect extends Component {
-  
+
   static propTypes = {
     alternativeSchemaSelections: PropTypes.object.isRequired,
     onSelectionChanged: PropTypes.func.isRequired,
-    isManualMode: PropTypes.bool.isRequired, 
-    alternativeSchemas: PropTypes.object.isRequired    
+    isManualMode: PropTypes.bool.isRequired,
+    alternativeSchemas: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -16,7 +16,7 @@ export default class AlternativeSchemaSelect extends Component {
     this.oneOfChange = this.oneOfChange.bind(this)
     this.selectOneOfComponent = this.selectOneOfComponent.bind(this)
     this.state = {
-      isManualMode: false,
+      isManualMode: true,
       alternativeSchemaSelections: {}
     }
   }
@@ -26,7 +26,7 @@ export default class AlternativeSchemaSelect extends Component {
     var { alternativeSchemaSelections } = this.state
 
     onSelectionChanged( (e.target.dataset.name === "MANUAL" ? alternativeSchemaSelections :{}))
-    this.setState({isManualMode: e.target.dataset.name === "MANUAL"});
+    this.setState({isManualMode: e.target.dataset.name === "MANUAL"})
   }
 
   oneOfChange(e, id) {
@@ -43,7 +43,7 @@ export default class AlternativeSchemaSelect extends Component {
       return (
         <div key={"OneOf" + attributePath} style={{ padding: "0 0 10px 0" }} className={"content-type-wrapper "}>
           <div>
-            <small htmlFor={attributePath} className={"response-control-alternative-examples__title"}>Choose {type} {attributePath}:</small>
+            <small htmlFor={attributePath} className={"response-control-alternative-examples"}>Choose {type} {attributePath}:</small>
           </div>
           <select
             className="content-type"
@@ -51,7 +51,6 @@ export default class AlternativeSchemaSelect extends Component {
             value={defaultOption}
             onChange={(e) => this.oneOfChange(e, attributePath)}
           >
-          <option key={"empty"} value={"-1"}>{"<empty>"}</option>
             {Object.keys(options).map((key, index) => {
               return <option key={index + key} value={index}>{options[key]}</option>
             })}
@@ -65,7 +64,11 @@ export default class AlternativeSchemaSelect extends Component {
   render() {
 
     const { alternativeSchemas } = this.props
-    const { isManualMode } = this.state
+    const { isManualMode } = this.state;
+
+    if (!alternativeSchemas.length) {
+      return null;
+    }
 
     var oneOfComponents = []
     if (isManualMode && alternativeSchemas) {
@@ -76,14 +79,6 @@ export default class AlternativeSchemaSelect extends Component {
     }
     return (
       <div>
-        <ul className="response-control-alternative-examples tab">Example Value with:&nbsp;&nbsp;
-              <li className={"tabitem" + (isManualMode ? "" : " active")}>
-            <a className="tablinks" data-name="FIRST" onClick={this.onModeChange} >first `oneOf` item</a>
-          </li>
-          <li className={"tabitem" + (isManualMode ? " active" : "")}>
-            <a className="tablinks" data-name="MANUAL" onClick={this.onModeChange} >manually selected `oneOf` item</a>
-          </li>
-        </ul>
         {oneOfComponents}
       </div>
     )

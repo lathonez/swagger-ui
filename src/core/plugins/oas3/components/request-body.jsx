@@ -143,7 +143,7 @@ const RequestBody = ({
               const isFile = type === "string" && (format === "binary" || format === "base64")
 
               return <tr key={key} className="parameters" data-property-name={key}>
-                <td className="col parameters-col_name">
+                <td className="parameters-col_name">
                         <div className={required ? "parameter__name required" : "parameter__name"}>
                           { key }
                           { !required ? null : <span style={{color: "red"}}>&nbsp;*</span> }
@@ -157,7 +157,7 @@ const RequestBody = ({
                           { prop.get("deprecated") ? "deprecated": null }
                         </div>
                       </td>
-                      <td className="col parameters-col_description">
+                      <td className="parameters-col_description">
                         <Markdown source={ description }></Markdown>
                         {isExecute ? <div><JsonSchemaForm
                           fn={fn}
@@ -180,6 +180,13 @@ const RequestBody = ({
   }
 
   var alternativeSchemas = showAlternativeSchemaExample === true ? [] : undefined
+  var requestBodyAlternate = getDefaultRequestBodyValue(
+    requestBody,
+    contentType,
+    activeExamplesKey,
+    alternativeSchemas,
+    alternativeSchemaSelections
+  );
 
   return <div>
     { requestBodyDescription &&
@@ -202,7 +209,7 @@ const RequestBody = ({
       isExecute ? (
         <div>
           <RequestBodyEditor
-            value={requestBodyValue}
+            value={requestBodyAlternate}
             defaultValue={getDefaultRequestBodyValue(
               requestBody,
               contentType,
@@ -213,7 +220,7 @@ const RequestBody = ({
           />
         </div>
       ) : (
-        
+
         <ModelExample
           getComponent={ getComponent }
           getConfigs={ getConfigs }
@@ -227,13 +234,7 @@ const RequestBody = ({
           example={
             <HighlightCode
               className="body-param__example"
-              value={stringify(requestBodyValue) || getDefaultRequestBodyValue(
-                requestBody,
-                contentType,
-                activeExamplesKey,
-                alternativeSchemas, 
-                alternativeSchemaSelections
-              )}
+              value={requestBodyAlternate}
             />
           }
         />
@@ -263,6 +264,8 @@ RequestBody.propTypes = {
   specPath: PropTypes.array.isRequired,
   activeExamplesKey: PropTypes.string,
   updateActiveExamplesKey: PropTypes.func,
+  alternativeSchemaSelections: PropTypes.object,
+  onAlternativeSchemaChange: PropTypes.func,
 }
 
 export default RequestBody
