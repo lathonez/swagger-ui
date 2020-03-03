@@ -180,6 +180,13 @@ const RequestBody = ({
   }
 
   var alternativeSchemas = showAlternativeSchemaExample === true ? [] : undefined
+  var requestBodyAlternate = getDefaultRequestBodyValue(
+    requestBody,
+    contentType,
+    activeExamplesKey,
+    alternativeSchemas,
+    alternativeSchemaSelections
+  );
 
   return <div>
     { requestBodyDescription &&
@@ -202,7 +209,7 @@ const RequestBody = ({
       isExecute ? (
         <div>
           <RequestBodyEditor
-            value={requestBodyValue}
+            value={requestBodyAlternate}
             defaultValue={getDefaultRequestBodyValue(
               requestBody,
               contentType,
@@ -213,7 +220,7 @@ const RequestBody = ({
           />
         </div>
       ) : (
-        
+
         <ModelExample
           getComponent={ getComponent }
           getConfigs={ getConfigs }
@@ -227,13 +234,7 @@ const RequestBody = ({
           example={
             <HighlightCode
               className="body-param__example"
-              value={stringify(requestBodyValue) || getDefaultRequestBodyValue(
-                requestBody,
-                contentType,
-                activeExamplesKey,
-                alternativeSchemas, 
-                alternativeSchemaSelections
-              )}
+              value={requestBodyAlternate}
             />
           }
         />
